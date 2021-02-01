@@ -1,0 +1,51 @@
+@echo off
+cls
+Title PIA launch
+if "%IS_UP%" == "1" (goto :kill)
+
+IF "%1" == "k" (
+
+:picked
+
+
+REM  --> Check for permissions  
+>nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"  
+
+REM --> If error flag set, we do not have admin.  
+if '%errorlevel%' NEQ '0' (  
+    echo Requesting administrative privileges...  
+    goto UACPrompt  
+) else ( goto gotAdmin )  
+
+:UACPrompt  
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"  
+    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
+    "%temp%\getadmin.vbs"
+	set IS_UP=1
+    exit /B  
+
+:gotAdmin  
+    if exist "%temp%\getadmin.vbs" ( del "%temp%\getadmin.vbs" )   
+    pushd "%CD%"  
+    CD /D "%~dp0"  
+
+:-------------------------------------
+:kill
+taskkill /f /im pia-client.exe  >nul 2>&1 
+taskkill /f /im pia-service.exe  >nul 2>&1
+@timeout /nobreak /t 5   >nul 2>&1
+net stop "Private Internet Access Service"  >nul 2>&1
+exit
+exit
+
+
+IF "%1" NEQ "k"(start "" /min /b C:\scripts\piarightstart.cmd ^& exit >nul 2>&1
+@timeout /nobreak /t 4   >nul 2>&1
+start "" "C:\Program Files\Private Internet Access\pia-service.exe"  >nul 2>&1
+start "" "C:\Program Files\Private Internet Access\pia-client.exe"  >nul 2>&1
+taskkill /f /im cmd.exe
+exit
+exit
+exit) else  (goto :picked)
+exit
+exit

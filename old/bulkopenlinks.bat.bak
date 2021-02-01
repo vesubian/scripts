@@ -1,0 +1,10 @@
+@echo off
+cls
+Title batch open links
+
+for /f "tokens=* delims=" %%i in (C:\Users\admin\Desktop\links.txt) do ^
+C:\ProgramData\Microsoft\Windows\Start^ Menu\Programs\Firefox.lnk %%i
+
+pause
+
+:eof

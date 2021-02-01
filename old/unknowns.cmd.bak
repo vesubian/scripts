@@ -1,0 +1,8 @@
+echo off
+cls
+cd /d d:\musique
+
+for /f "tokens=* usebackq delims=" %%i in (`type "C:\Users\Admin\Desktop\dirtorm.txt"`) do (pushd "%%i" && move /y *.mp3 .. && popd && rmdir "%%i")
+pause
+:eof
+exit
